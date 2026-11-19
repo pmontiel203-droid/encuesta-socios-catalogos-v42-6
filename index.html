@@ -20,7 +20,7 @@ button[aria-pressed="false"]{background:#64748b}#vistaEjecutiva .panel td{white-
 .calendar-day.zero{opacity:.65}
 @media(max-width:600px){.calendar-grid{gap:3px}.calendar-day{min-height:45px;padding:4px;border-radius:6px}.calendar-day .daycount{font-size:11px}}
 </style></head><body><div class="wrap">
-<div class="card"><h1>Detección de Necesidades · Socios</h1><div>Catálogos y acordeones <span class="badge">V42.6 · RECLASIFICACIÓN REFORZADA + ANTIGÜEDAD</span></div><p class="note">Captura pública ligera. Los registros se guardan en una base central; el histórico y las descargas se consultan únicamente cuando se necesitan para reducir transferencia de datos. La antigüedad se estima a partir del número de socio y se conserva en los resultados.</p></div>
+<div class="card"><h1>Detección de Necesidades · Socios</h1><div>Catálogos y acordeones <span class="badge">V42.7 · PDF CON CLASIFICACIÓN UNIFICADA + ANTIGÜEDAD</span></div><p class="note">Captura pública ligera. Los registros se guardan en una base central; el histórico y las descargas se consultan únicamente cuando se necesitan para reducir transferencia de datos. La antigüedad se estima a partir del número de socio y se conserva en los resultados.</p></div>
 <form id="form">
 <div class="card"><h2>Datos del abordaje</h2><div class="grid">
 <label>Fecha<input id="fecha" type="date" required readonly aria-readonly="true" title="La fecha se asigna automáticamente al día de hoy"></label>
@@ -153,6 +153,19 @@ function categoryNames(t){
  if(/(?:muy|demasiado) pequen|pequeno|reducid[oa]s|no conviene|no conv[ie]ne/.test(n))hits.push('Tamaño del catálogo: más pequeño');
  if(/(?:se parece|parecido|similar|lo mismo) (?:a|que) (?:los|el|otros|demas)|(?:ya )?vienen? (?:los )?modelos? en (?:los )?otros/.test(n))hits.push('Contenido repetido entre catálogos');
  if(/(?:uso|utilizo|veo|consulto) (?:el catalogo )?(?:en|mediante|por) (?:la )?(?:app|aplicacion)|(?:app|aplicacion) es mas facil/.test(n))hits.push('Preferencia digital');
+ // Reclasificación reforzada de frases frecuentes que anteriormente quedaban genéricas.
+ // Se conserva el texto original; estas reglas solo asignan categorías con evidencia textual.
+ if(/^(?:no compro|no compra|ni compro|no compran|nunca compro|nunca compra|no comprar|nada .*no compro|no los compro|no las compro|no adquiere|no adquiero)(?: catalogos?| esos catalogos?| de esos catalogos?| por ahora)?[.! ]*$/.test(n)
+   || /no (?:compro|compra|compran) (?:ningun|ninguno|ningunos|los|esos|de esos)? catalogos?/.test(n)) hits.push('No compra catálogos');
+ if(/no me gusta|no me gustan|no le gusta|no le gustan|no les gusta|no les gustan|no es de mi agrado|no es de su agrado|no me agrada|no le agrada/.test(n)) hits.push('No es de su preferencia / no le agrada');
+ if(/no me sirve|no me sirven|no le sirve|no le sirven|no me es util|no le es util|no se me hace util|no lo considero util|no resulta util|no les resulta util/.test(n)) hits.push('No le resulta útil / no le sirve');
+ if(/no me interesa|no le interesa|no les interesa|no es de mi interes|no es necesario|no lo necesito|no los necesito|no la necesito|no requiere|no requiero|no lo ocupo|no los ocupo/.test(n)) hits.push('No le interesa / no lo necesita');
+ if(/no funciona(?:n)? (?:para|en)? (?:mi|su)? venta|no le funciona|no me funciona|no funciona mucho|no les funciona|no genera ventas|no genera venta|no ayuda a vender/.test(n)) hits.push('Bajo resultado de venta / causa por precisar');
+ if(/(?:no|casi no) (?:lo|los|la|las)? ?(?:utilizo|uso|usamos)|(?:lo|los|la|las) uso poco|(?:lo|los|la|las) utilizo poco|no acostumbro (?:usar|utilizar|comprar)/.test(n)) hits.push('Uso poco / no utiliza el catálogo');
+ if(/no tengo (?:a quien|clientes|clientela)|no hay (?:quien|clientes|clientela)|no cuento con clientes|no tengo publico|no es mi giro|no trabajo (?:esa|esta) linea|no vendo (?:esa|este|esa clase de|ese tipo de)/.test(n)) hits.push('Sin clientes para ese catálogo');
+ if(/no me lo solicitan|no me lo piden|no se lo solicitan|no se lo piden|no lo solicitan|no lo piden|no tiene demanda|no hay demanda|no es solicitado/.test(n)) hits.push('Baja demanda de sus clientes');
+ if(/no hay producto|no hay mercancia|no encuentro (?:el|la|los|las)? ?(?:producto|mercancia|modelo)|no tienen (?:el|la|los|las)? ?(?:producto|mercancia)|no esta disponible|no se encuentra (?:el|la|los|las)? ?(?:producto|mercancia)/.test(n)) hits.push('Disponibilidad de mercancía');
+ if(/^(?:nada|ninguna|ninguno|no|sin comentario|no se|nose|no sabria|no sé)[.! ]*$/.test(n)) hits.push('Respuesta insuficiente / requiere precisar');
  const result=[...new Set([...hits,...dims])];
  return result.length?result:['No especificó el motivo'];
 }
